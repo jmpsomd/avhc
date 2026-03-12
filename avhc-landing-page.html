@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Very Harry Christmas Experience | Jennifer Mummert Photography</title>
+<meta name="description" content="Southern Maryland's only fully immersive wizarding world holiday photo experience. Three magical sets, four breathtaking backdrops. Booking October 2026.">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   VARIABLES & RESET
+════════════════════════════════════════════════════════════ */
+:root {
+  --gold:        #C9A84C;
+  --gold-light:  #F0D080;
+  --gold-bright: #FFE08A;
+  --gold-dim:    #8B6914;
+  --gold-dark:   #4A3408;
+  --scarlet:     #740001;
+  --scarlet-mid: #AE0001;
+  --scarlet-glow:rgba(174,0,1,0.35);
+  --navy:        #060E18;
+  --navy-mid:    #0D1B2A;
+  --navy-light:  #122233;
+  --parchment:   #F5EDD8;
+  --parchment-d: #E0CFA8;
+  --ink:         #1A1008;
+  --smoke:       #8A8070;
+  --smoke-light: #B0A898;
+  --emerald:     #1A3A22;
+  --cream:       #FBF6EC;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--navy);
+  color: var(--parchment);
+  font-family: 'Lora', serif;
+  overflow-x: hidden;
+  cursor: none; /* replaced by wand cursor */
+}
+
+/* ═══════════════════════════════════════════════════════════
+   WAND CURSOR
+════════════════════════════════════════════════════════════ */
+#wand-cursor {
+  position: fixed;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-4px, -4px);
+  transition: transform 0.08s ease;
+}
+#wand-cursor svg { width: 32px; height: 32px; filter: drop-shadow(0 0 6px rgba(240,208,128,0.9)); }
+
+.spark {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99998;
+  border-radius: 50%;
+  animation: sparkFade 0.7s ease forwards;
+}
+@keyframes sparkFade {
+  0%   { opacity: 1; transform: scale(1) translate(0,0); }
+  100% { opacity: 0; transform: scale(0) translate(var(--dx), var(--dy)); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FLOATING PARTICLES (canvas overlay)
+════════════════════════════════════════════════════════════ */
+#particles-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLL REVEAL
+════════════════════════════════════════════════════════════ */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.75s ease, transform 0.75s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.35s; }
+.reveal-delay-4 { transition-delay: 0.5s; }
+
+/* ═══════════════════════════════════════════════════════════
+   SHARED UTILITIES
+════════════════════════════════════════════════════════════ */
+.gold-line {
+  display: flex; align-items: center; gap: 18px;
+  margin: 28px 0;
+}
+.gold-line::before, .gold-line::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(201,168,76,0.5), transparent);
+}
+.gold-line span { font-size: 1.1rem; color: var(--gold); flex-shrink: 0; }
+
+.eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 14px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STICKY NAV
+════════════════════════════════════════════════════════════ */
+.site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 14px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.4s, padding 0.3s, backdrop-filter 0.4s;
+}
+.site-nav.scrolled {
+  background: rgba(6,14,24,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+  padding: 10px 48px;
+}
+.nav-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--gold-light);
+  text-decoration: none;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+.nav-logo span { display: block; font-size: 0.55rem; color: var(--smoke-light); letter-spacing: 0.3em; }
+.nav-cta {
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  color: var(--ink);
+  border: none;
+  padding: 9px 24px;
+  border-radius: 3px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: none;
+  text-decoration: none;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+.nav-cta:hover {
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(201,168,76,0.35);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HERO
+════════════════════════════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  overflow: hidden;
+  z-index: 2;
+}
+
+/* Layered radial glow background */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(116,0,1,0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 80% at 30% 70%, rgba(26,58,34,0.2) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 70% 20%, rgba(139,105,20,0.15) 0%, transparent 60%),
+    linear-gradient(to bottom, #060E18 0%, #0A1520 50%, #060E18 100%);
+  z-index: -1;
+}
+
+/* Star field */
+.hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 5% 10%, rgba(255,255,220,0.9) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 15% 3%, rgba(255,255,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 15%, rgba(255,255,220,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 40% 6%, rgba(255,255,200,0.9) 0%, transparent 100%),
+    radial-gradient(2px 2px at 55% 2%, rgba(255,255,255,0.95) 0%, transparent 100%),
+    radial-gradient(1px 1px at 68% 12%, rgba(255,255,220,0.7) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 80% 5%, rgba(255,255,255,0.85) 0%, transparent 100%),
+    radial-gradient(1px 1px at 92% 18%, rgba(255,255,200,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 10% 35%, rgba(255,255,220,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 88% 40%, rgba(255,255,200,0.7) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 45% 55%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 72% 62%, rgba(255,255,220,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 18% 72%, rgba(255,255,200,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 80%, rgba(255,255,220,0.7) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 33% 88%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85% 92%, rgba(255,255,200,0.5) 0%, transparent 100%);
+  animation: starTwinkle 6s ease-in-out infinite alternate;
+  z-index: -1;
+}
+@keyframes starTwinkle { 0%{opacity:0.5} 100%{opacity:1} }
+
+.hero-crest {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 24px;
+  animation: wandFloat 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(240,208,128,0.6));
+}
+@keyframes wandFloat {
+  0%,100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-14px) rotate(3deg); }
+}
+
+.hero-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.5em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 1s ease 0.3s forwards;
+}
+
+.hero-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(2.2rem, 6vw, 5rem);
+  color: var(--gold-light);
+  line-height: 1.1;
+  text-shadow:
+    0 0 60px rgba(201,168,76,0.5),
+    0 0 120px rgba(201,168,76,0.2),
+    0 3px 6px rgba(0,0,0,0.8);
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: fadeUp 1s ease 0.5s forwards;
+}
+
+.hero-title-sub {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.75rem, 1.5vw, 1rem);
+  letter-spacing: 0.35em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 1s ease 0.7s forwards;
+}
+
+.hero-tagline {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  color: var(--parchment);
+  opacity: 0;
+  max-width: 640px;
+  line-height: 1.85;
+  margin-bottom: 40px;
+  animation: fadeUp 1s ease 0.9s forwards;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 44px;
+  opacity: 0;
+  animation: fadeUp 1s ease 1.1s forwards;
+}
+.hero-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 7px 18px;
+  border-radius: 100px;
+  border: 1px solid rgba(201,168,76,0.35);
+  background: rgba(201,168,76,0.07);
+  color: var(--gold-light);
+}
+
+.hero-btns {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeUp 1s ease 1.3s forwards;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  color: var(--ink);
+  border: none;
+  padding: 16px 40px;
+  border-radius: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: none;
+  text-decoration: none;
+  transition: all 0.3s;
+  box-shadow: 0 4px 24px rgba(201,168,76,0.3);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+  transform: translateY(-3px);
+  box-shadow: 0 8px 36px rgba(201,168,76,0.5);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--gold-light);
+  border: 1px solid rgba(201,168,76,0.4);
+  padding: 16px 40px;
+  border-radius: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: none;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.btn-ghost:hover {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.1);
+  transform: translateY(-3px);
+}
+
+/* scroll indicator */
+.scroll-hint {
+  position: absolute;
+  bottom: 32px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  opacity: 0;
+  animation: fadeUp 1s ease 1.8s forwards;
+}
+.scroll-hint span {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  color: var(--smoke);
+  text-transform: uppercase;
+}
+.scroll-chevron {
+  width: 20px; height: 20px;
+  border-right: 1px solid var(--gold-dim);
+  border-bottom: 1px solid var(--gold-dim);
+  transform: rotate(45deg);
+  animation: chevronBounce 2s ease-in-out infinite;
+}
+@keyframes chevronBounce { 0%,100%{transform:rotate(45deg) translateY(0)} 50%{transform:rotate(45deg) translateY(6px)} }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PHOTO GALLERY STRIP
+════════════════════════════════════════════════════════════ */
+.gallery-strip {
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  padding: 0;
+  background: var(--navy);
+}
+.gallery-track {
+  display: flex;
+  gap: 4px;
+  animation: galleryScroll 40s linear infinite;
+  width: max-content;
+}
+.gallery-track:hover { animation-play-state: paused; }
+@keyframes galleryScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.gallery-img {
+  width: 320px;
+  height: 220px;
+  object-fit: cover;
+  flex-shrink: 0;
+  filter: brightness(0.85) saturate(0.9);
+  transition: filter 0.4s, transform 0.4s;
+}
+.gallery-img:hover {
+  filter: brightness(1.05) saturate(1.1);
+  transform: scale(1.02);
+  z-index: 2;
+}
+/* fade edges */
+.gallery-strip::before,
+.gallery-strip::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 120px;
+  z-index: 3;
+  pointer-events: none;
+}
+.gallery-strip::before { left: 0; background: linear-gradient(to right, var(--navy), transparent); }
+.gallery-strip::after  { right: 0; background: linear-gradient(to left, var(--navy), transparent); }
+
+/* ═══════════════════════════════════════════════════════════
+   INTRO SECTION
+════════════════════════════════════════════════════════════ */
+.intro-section {
+  position: relative;
+  z-index: 2;
+  padding: 100px 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+.intro-section .big-quote {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: clamp(1.15rem, 2.5vw, 1.6rem);
+  line-height: 1.8;
+  color: var(--parchment);
+  opacity: 0.9;
+  margin-bottom: 32px;
+}
+.intro-section .big-quote strong {
+  font-style: normal;
+  color: var(--gold-light);
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SETS SECTION
+════════════════════════════════════════════════════════════ */
+.sets-section {
+  position: relative;
+  z-index: 2;
+  padding: 80px 24px 100px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.sets-section .section-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.section-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  color: var(--gold-light);
+  line-height: 1.2;
+  text-shadow: 0 0 40px rgba(201,168,76,0.3);
+  margin-bottom: 12px;
+}
+.section-intro {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--parchment);
+  opacity: 0.75;
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+/* Set cards */
+.sets-grid {
+  display: grid;
+  gap: 32px;
+}
+
+.set-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(201,168,76,0.2);
+  background: var(--navy-mid);
+  transition: border-color 0.4s, box-shadow 0.4s;
+}
+.set-card:hover {
+  border-color: rgba(201,168,76,0.5);
+  box-shadow: 0 8px 48px rgba(201,168,76,0.12);
+}
+.set-card.reverse { direction: rtl; }
+.set-card.reverse > * { direction: ltr; }
+
+.set-img-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+}
+.set-img-wrap img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease, filter 0.5s ease;
+  filter: brightness(0.85);
+}
+.set-card:hover .set-img-wrap img {
+  transform: scale(1.06);
+  filter: brightness(1);
+}
+
+/* Golden shimmer on hover */
+.set-img-wrap::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(201,168,76,0.15), transparent, rgba(116,0,1,0.1));
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.set-card:hover .set-img-wrap::after { opacity: 1; }
+
+.set-content {
+  padding: 44px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+.set-content::before {
+  content: '';
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+}
+.set-card.reverse .set-content::before {
+  left: auto; right: 0;
+}
+
+.set-number {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 3.5rem;
+  color: rgba(201,168,76,0.1);
+  line-height: 1;
+  margin-bottom: 4px;
+  display: block;
+}
+.set-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.set-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  color: var(--gold-light);
+  line-height: 1.25;
+  margin-bottom: 16px;
+}
+.set-desc {
+  font-family: 'Lora', serif;
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: var(--parchment);
+  opacity: 0.82;
+  margin-bottom: 20px;
+}
+.set-detail-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid rgba(201,168,76,0.3);
+  background: rgba(201,168,76,0.06);
+  color: var(--gold-light);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   IMMERSIVE QUOTE BAND
+════════════════════════════════════════════════════════════ */
+.quote-band {
+  position: relative;
+  z-index: 2;
+  padding: 96px 24px;
+  text-align: center;
+  overflow: hidden;
+}
+.quote-band::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 100% at 50% 50%, rgba(116,0,1,0.22) 0%, transparent 70%),
+    linear-gradient(to bottom, var(--navy), var(--navy-mid), var(--navy));
+}
+.quote-band-inner {
+  position: relative;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.quote-band blockquote {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: clamp(1.25rem, 3vw, 1.9rem);
+  color: var(--parchment);
+  line-height: 1.75;
+  margin-bottom: 20px;
+}
+.quote-band blockquote em {
+  font-style: normal;
+  color: var(--gold-light);
+}
+.quote-attribution {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EXPERIENCE DETAILS / WHAT MAKES IT DIFFERENT
+════════════════════════════════════════════════════════════ */
+.details-section {
+  position: relative;
+  z-index: 2;
+  padding: 80px 24px 100px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 56px;
+}
+.detail-card {
+  background: linear-gradient(160deg, rgba(201,168,76,0.06) 0%, rgba(13,27,42,0.9) 100%);
+  border: 1px solid rgba(201,168,76,0.18);
+  border-radius: 10px;
+  padding: 32px 26px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  text-align: center;
+}
+.detail-card:hover {
+  border-color: rgba(201,168,76,0.45);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 40px rgba(201,168,76,0.12);
+}
+.detail-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+.detail-icon { font-size: 2.2rem; margin-bottom: 16px; display: block; }
+.detail-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  color: var(--gold-light);
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+.detail-text {
+  font-family: 'Lora', serif;
+  font-size: 0.85rem;
+  line-height: 1.75;
+  color: var(--parchment);
+  opacity: 0.78;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HOGWARTS LETTER CALLOUT
+════════════════════════════════════════════════════════════ */
+.letter-section {
+  position: relative;
+  z-index: 2;
+  padding: 80px 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.letter-card {
+  background: linear-gradient(135deg, rgba(116,0,1,0.18), rgba(13,27,42,0.95));
+  border: 1px solid rgba(174,0,1,0.35);
+  border-radius: 12px;
+  padding: 56px 60px;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+.letter-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(to right, transparent, var(--scarlet-mid), var(--gold), var(--scarlet-mid), transparent);
+}
+/* wax seal decoration */
+.letter-card::after {
+  content: '⚡';
+  position: absolute;
+  bottom: -20px; right: -20px;
+  font-size: 10rem;
+  opacity: 0.03;
+  line-height: 1;
+}
+
+.letter-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.letter-heading {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+  color: var(--gold-light);
+  line-height: 1.25;
+  margin-bottom: 18px;
+  text-shadow: 0 0 30px rgba(201,168,76,0.3);
+}
+.letter-body {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--parchment);
+  opacity: 0.85;
+  margin-bottom: 28px;
+}
+.letter-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.letter-features li {
+  font-family: 'Lora', serif;
+  font-size: 0.85rem;
+  color: var(--parchment);
+  opacity: 0.85;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.5;
+}
+.letter-features li::before {
+  content: '✦';
+  color: var(--gold);
+  font-size: 0.7rem;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.letter-envelope-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.envelope-art {
+  width: 100%;
+  max-width: 280px;
+  background: linear-gradient(160deg, rgba(245,237,216,0.08), rgba(245,237,216,0.03));
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 8px;
+  padding: 32px;
+  text-align: center;
+  position: relative;
+}
+.envelope-art::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 40%;
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+  clip-path: polygon(0 0, 50% 80%, 100% 0);
+  background: linear-gradient(to bottom, rgba(201,168,76,0.08), transparent);
+}
+.envelope-icon { font-size: 3rem; display: block; margin-bottom: 12px; }
+.envelope-address {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--parchment);
+  opacity: 0.7;
+  line-height: 1.8;
+}
+.envelope-seal {
+  font-size: 2.5rem;
+  animation: sealPulse 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(201,168,76,0.5));
+}
+@keyframes sealPulse { 0%,100%{filter:drop-shadow(0 0 10px rgba(201,168,76,0.5))} 50%{filter:drop-shadow(0 0 20px rgba(201,168,76,0.9))} }
+
+/* ═══════════════════════════════════════════════════════════
+   PRICING SECTION
+════════════════════════════════════════════════════════════ */
+.pricing-section {
+  position: relative;
+  z-index: 2;
+  padding: 80px 24px 100px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 48px;
+}
+.pricing-card {
+  background: linear-gradient(160deg, rgba(201,168,76,0.06) 0%, rgba(13,27,42,0.95) 100%);
+  border: 1px solid rgba(201,168,76,0.22);
+  border-radius: 12px;
+  padding: 44px 36px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s;
+}
+.pricing-card:hover {
+  border-color: rgba(201,168,76,0.55);
+  transform: translateY(-8px);
+  box-shadow: 0 16px 50px rgba(201,168,76,0.15);
+}
+.pricing-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+.pricing-card.featured {
+  border-color: rgba(201,168,76,0.45);
+  background: linear-gradient(160deg, rgba(201,168,76,0.1) 0%, rgba(13,27,42,0.95) 100%);
+}
+.pricing-card.featured::before {
+  background: linear-gradient(to right, transparent, var(--gold-bright), transparent);
+}
+.featured-badge {
+  position: absolute;
+  top: 16px; right: 16px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  color: var(--ink);
+  border-radius: 100px;
+  font-weight: 700;
+}
+.pricing-icon { font-size: 2rem; margin-bottom: 12px; display: block; }
+.pricing-duration {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.pricing-price {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 2.6rem;
+  color: var(--gold-light);
+  line-height: 1;
+  margin-bottom: 6px;
+  text-shadow: 0 0 30px rgba(201,168,76,0.3);
+}
+.pricing-price span {
+  font-size: 1rem;
+  opacity: 0.7;
+  font-family: 'Cinzel', serif;
+}
+.pricing-images {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--parchment);
+  opacity: 0.7;
+  margin-bottom: 24px;
+}
+.pricing-includes {
+  list-style: none;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-bottom: 32px;
+}
+.pricing-includes li {
+  font-family: 'Lora', serif;
+  font-size: 0.83rem;
+  color: var(--parchment);
+  opacity: 0.82;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  line-height: 1.5;
+}
+.pricing-includes li::before { content: '✦'; color: var(--gold); font-size: 0.65rem; flex-shrink: 0; padding-top: 2px; }
+
+.btn-book {
+  display: block;
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  color: var(--ink);
+  border: none;
+  padding: 14px 24px;
+  border-radius: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: none;
+  text-decoration: none;
+  transition: all 0.25s;
+  text-align: center;
+}
+.btn-book:hover {
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(201,168,76,0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   AMAZON / COSTUME SECTION
+════════════════════════════════════════════════════════════ */
+.costume-section {
+  position: relative;
+  z-index: 2;
+  padding: 60px 24px 80px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.costume-card {
+  background: linear-gradient(160deg, rgba(26,58,34,0.2) 0%, rgba(13,27,42,0.95) 100%);
+  border: 1px solid rgba(42,138,74,0.25);
+  border-radius: 12px;
+  padding: 44px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.costume-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(to right, transparent, rgba(42,138,74,0.6), var(--gold), rgba(42,138,74,0.6), transparent);
+}
+.costume-intro {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--parchment);
+  opacity: 0.82;
+  margin-bottom: 32px;
+  max-width: 600px;
+}
+.costume-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.house-block {
+  background: rgba(245,237,216,0.04);
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 8px;
+  padding: 20px 22px;
+}
+.house-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.house-gryffindor .house-name { color: #FFD700; }
+.house-hufflepuff .house-name { color: #FFC700; }
+.house-ravenclaw .house-name  { color: #93C5FD; }
+.house-slytherin .house-name  { color: #86EFAC; }
+.house-links {
+  display: flex;
+  gap: 10px;
+}
+.house-link {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 100px;
+  border: 1px solid rgba(201,168,76,0.3);
+  background: rgba(201,168,76,0.06);
+  color: var(--gold-light);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.house-link:hover {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.14);
+}
+.other-props {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(201,168,76,0.12);
+}
+.other-props-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.prop-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.prop-link {
+  font-family: 'Lora', serif;
+  font-size: 0.82rem;
+  color: var(--gold-light);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+  transition: border-color 0.2s, color 0.2s;
+}
+.prop-link:hover { color: var(--gold-bright); border-color: var(--gold); }
+.affiliate-note {
+  margin-top: 20px;
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--smoke);
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FAQ SECTION
+════════════════════════════════════════════════════════════ */
+.faq-section {
+  position: relative;
+  z-index: 2;
+  padding: 80px 24px 100px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.faq-list { margin-top: 48px; display: flex; flex-direction: column; gap: 12px; }
+
+.faq-item {
+  background: linear-gradient(160deg, rgba(201,168,76,0.04) 0%, rgba(13,27,42,0.9) 100%);
+  border: 1px solid rgba(201,168,76,0.18);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.faq-item:hover { border-color: rgba(201,168,76,0.4); }
+.faq-item.open { border-color: rgba(201,168,76,0.45); }
+
+.faq-q {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  cursor: none;
+  text-align: left;
+  transition: background 0.2s;
+}
+.faq-q:hover { background: rgba(201,168,76,0.05); }
+
+.faq-q-text {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  color: var(--gold-light);
+  line-height: 1.4;
+}
+.faq-chevron {
+  width: 18px; height: 18px;
+  border-right: 1px solid var(--gold-dim);
+  border-bottom: 1px solid var(--gold-dim);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+  transition: transform 0.3s;
+}
+.faq-item.open .faq-chevron { transform: rotate(225deg); }
+
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+}
+.faq-item.open .faq-a { max-height: 300px; }
+.faq-a-inner {
+  padding: 0 24px 20px;
+  font-family: 'Lora', serif;
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: var(--parchment);
+  opacity: 0.82;
+  border-top: 1px solid rgba(201,168,76,0.1);
+  padding-top: 16px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FINAL CTA
+════════════════════════════════════════════════════════════ */
+.final-cta {
+  position: relative;
+  z-index: 2;
+  padding: 100px 24px 120px;
+  text-align: center;
+  overflow: hidden;
+}
+.final-cta::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 80% at 50% 50%, rgba(116,0,1,0.2) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 20% 80%, rgba(26,58,34,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 80% 20%, rgba(139,105,20,0.12) 0%, transparent 60%);
+}
+.final-cta-inner {
+  position: relative;
+  max-width: 660px;
+  margin: 0 auto;
+}
+.final-cta-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  color: var(--gold-light);
+  line-height: 1.15;
+  text-shadow: 0 0 50px rgba(201,168,76,0.4);
+  margin-bottom: 20px;
+}
+.final-cta-sub {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--parchment);
+  opacity: 0.82;
+  line-height: 1.8;
+  margin-bottom: 40px;
+  max-width: 520px;
+  margin-left: auto; margin-right: auto;
+}
+.final-btns {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.urgency-note {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--scarlet-mid);
+  text-transform: uppercase;
+  animation: urgencyPulse 2.5s ease-in-out infinite;
+}
+@keyframes urgencyPulse { 0%,100%{opacity:0.7} 50%{opacity:1} }
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════════════════════ */
+.site-footer {
+  position: relative;
+  z-index: 2;
+  border-top: 1px solid rgba(201,168,76,0.15);
+  padding: 40px 24px;
+  text-align: center;
+}
+.footer-logo {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1rem;
+  color: var(--gold-light);
+  margin-bottom: 8px;
+  display: block;
+}
+.footer-meta {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.25em;
+  color: var(--smoke);
+  text-transform: uppercase;
+  line-height: 2.2;
+}
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.footer-links a {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  color: var(--smoke-light);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--gold-light); }
+
+/* ═══════════════════════════════════════════════════════════
+   CANDLE FLICKER ELEMENTS
+════════════════════════════════════════════════════════════ */
+.candle-row {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 16px 0;
+}
+.candle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.candle-flame {
+  font-size: 1.2rem;
+  animation: flicker 1.5s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 6px rgba(255,165,0,0.8));
+}
+.candle:nth-child(2) .candle-flame { animation-duration: 1.8s; animation-delay: 0.3s; }
+.candle:nth-child(3) .candle-flame { animation-duration: 1.3s; animation-delay: 0.7s; }
+.candle:nth-child(4) .candle-flame { animation-duration: 2s; animation-delay: 1s; }
+.candle:nth-child(5) .candle-flame { animation-duration: 1.6s; animation-delay: 0.5s; }
+@keyframes flicker {
+  0% { transform: scale(1) rotate(-2deg); opacity: 0.9; }
+  100% { transform: scale(1.1) rotate(2deg); opacity: 1; }
+}
+.candle-body { width: 6px; height: 28px; background: linear-gradient(to bottom, #F5EDD8, #C9A84C88); border-radius: 2px; }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE
+════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .set-card, .set-card.reverse { grid-template-columns: 1fr; direction: ltr; }
+  .set-img-wrap { aspect-ratio: 16/9; }
+  .set-content { padding: 28px 24px; }
+  .set-content::before { display: none; }
+  .details-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .letter-card { grid-template-columns: 1fr; padding: 36px 28px; }
+  .letter-envelope-side { display: none; }
+  .costume-grid { grid-template-columns: 1fr; }
+  .site-nav { padding: 12px 20px; }
+  .site-nav.scrolled { padding: 10px 20px; }
+}
+@media (max-width: 480px) {
+  .hero-btns, .final-btns { flex-direction: column; align-items: center; }
+  .hero-crest { font-size: 2.8rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- WAND CURSOR -->
+<div id="wand-cursor">
+  <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Wand shaft -->
+    <line x1="28" y1="4" x2="4" y2="28" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Wand tip glow -->
+    <circle cx="28" cy="4" r="3" fill="#F0D080" opacity="0.9"/>
+    <circle cx="28" cy="4" r="5" fill="#C9A84C" opacity="0.3"/>
+    <!-- Handle detail -->
+    <line x1="6" y1="26" x2="4" y2="28" stroke="#8B6914" stroke-width="3.5" stroke-linecap="round"/>
+  </svg>
+</div>
+
+<!-- PARTICLE CANVAS -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- ── NAV ── -->
+<nav class="site-nav" id="siteNav">
+  <a href="https://jmpsomd.com" class="nav-logo">
+    Jennifer Mummert
+    <span>Photography</span>
+  </a>
+  <a href="https://jmpsomd.pixieset.com/booking/wizarding-world-holiday-experience-30--Experience" class="nav-cta" target="_blank">Book 30 Min ⚡</a>
+  <a href="https://jmpsomd.pixieset.com/booking/wizarding-world-holiday-experience-60-minutes-experience" class="nav-cta" target="_blank" style="background:transparent;color:var(--gold-light);border:1px solid rgba(201,168,76,0.5);">Book 60 Min 🪄</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <span class="hero-crest">🪄</span>
+  <p class="hero-eyebrow">Southern Maryland · October 2026</p>
+  <h1 class="hero-title">A Very Harry<br>Christmas</h1>
+  <p class="hero-title-sub">The Experience</p>
+  <p class="hero-tagline">
+    Every witch, wizard, and dreamer has that one memory —<br>
+    the moment they first believed.<br>
+    <strong style="font-style:normal; color:var(--gold-light); font-family:'Cinzel',serif; font-size:0.9em;">Now you don't have to imagine it. You can step inside it.</strong>
+  </p>
+  <div class="hero-badges">
+    <span class="hero-badge">3 Magical Sets</span>
+    <span class="hero-badge">4 Enchanted Backdrops</span>
+    <span class="hero-badge">Southern Maryland</span>
+    <span class="hero-badge">Families · Couples · Everyone</span>
+  </div>
+  <div class="hero-btns">
+    <a href="https://jmpsomd.pixieset.com/booking/wizarding-world-holiday-experience-30--Experience" class="btn-primary" target="_blank">🎟 Book 30 Min</a>
+    <a href="https://jmpsomd.pixieset.com/booking/wizarding-world-holiday-experience-60-minutes-experience" class="btn-primary" target="_blank">🪄 Book 60 Min</a>
+    <a href="#sets" class="btn-ghost">Explore the Sets ↓</a>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll to discover</span>
+    <div class="scroll-chevron"></div>
+  </div>
+</section>
+
+<!-- ── GALLERY STRIP ── -->
+<div class="gallery-strip">
+  <div class="gallery-track" id="galleryTrack">
+    <img class="gallery-img" src="https://static.showit.co/1200/grnKby-LhURUKPp8EHgHrw/116285/wizard_shoppe.jpg" alt="Wizard Shoppe" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/hxhZj3Umsoqk2PhMqeoY3Q/116285/train_station.jpg" alt="Platform 9 3/4" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/6zlGptfVkdpOq4g_nl1TJg/116285/school_library_family.jpg" alt="Dumbledore Library Family" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/W24tfR6-bgSbpjpvL7kRkw/116285/catching_snow_in_diagon_alley.jpg" alt="Catching Snow Diagon Alley" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/47G2HJ1v6WVxr1lUkI4q0Q/116285/sorting_hat_christmas.jpg" alt="Sorting Hat Christmas" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/0Rbh3MiVblAXf3a1rblTwg/116285/school_library_christmas_studyin.jpg" alt="Library Christmas" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/dKDt1-0-Nov1JswLa70O9Q/116285/platform_9_3_4_family_christmas.jpg" alt="Platform Family Christmas" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/gk61apoMc0Sx0L49lUrXWQ/116285/magic_shoppe_girl_christmas.jpg" alt="Magic Shoppe Girl" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/ECqXO7JJ54qf-jnt_oTIhg/116285/magic_shoppe_family_christmas.jpg" alt="Magic Shoppe Family" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/0D_0haPAGjanNibLrSAwnw/116285/familiy_study_time_christmas_hog.jpg" alt="Family Study Time" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/-dEv-uSBeMNPjsaYC7i-eg/116285/hogwarts_girl_with_owl_diagon_al.jpg" alt="Hogwarts Girl Owl" loading="lazy">
+    <!-- duplicate for seamless loop -->
+    <img class="gallery-img" src="https://static.showit.co/1200/grnKby-LhURUKPp8EHgHrw/116285/wizard_shoppe.jpg" alt="Wizard Shoppe" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/hxhZj3Umsoqk2PhMqeoY3Q/116285/train_station.jpg" alt="Platform 9 3/4" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/6zlGptfVkdpOq4g_nl1TJg/116285/school_library_family.jpg" alt="Dumbledore Library Family" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/W24tfR6-bgSbpjpvL7kRkw/116285/catching_snow_in_diagon_alley.jpg" alt="Catching Snow" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/47G2HJ1v6WVxr1lUkI4q0Q/116285/sorting_hat_christmas.jpg" alt="Sorting Hat" loading="lazy">
+    <img class="gallery-img" src="https://static.showit.co/1200/0Rbh3MiVblAXf3a1rblTwg/116285/school_library_christmas_studyin.jpg" alt="Library Study" loading="lazy">
+  </div>
+</div>
+
+<!-- ── INTRO ── -->
+<section class="intro-section">
+  <div class="gold-line reveal"><span>⚡</span></div>
+  <span class="eyebrow reveal reveal-delay-1">The Wizarding World Holiday Experience</span>
+  <p class="big-quote reveal reveal-delay-2">
+    Families wander cobblestone alleys. Couples steal quiet moments under floating candles. Children gasp as cameras capture that <strong>spark of wonder</strong>. And adults remember exactly why they fell in love with this world in the first place.
+    <br><br>
+    Because here, it's not about posing for a photo — <strong>it's about becoming part of the story.</strong>
+  </p>
+  <div class="candle-row reveal reveal-delay-3">
+    <div class="candle"><div class="candle-flame">🕯</div><div class="candle-body"></div></div>
+    <div class="candle"><div class="candle-flame">🕯</div><div class="candle-body"></div></div>
+    <div class="candle"><div class="candle-flame">🕯</div><div class="candle-body"></div></div>
+    <div class="candle"><div class="candle-flame">🕯</div><div class="candle-body"></div></div>
+    <div class="candle"><div class="candle-flame">🕯</div><div class="candle-body"></div></div>
+  </div>
+</section>
+
+<!-- ── SETS ── -->
+<section class="sets-section" id="sets">
+  <div class="section-header reveal">
+    <span class="eyebrow">Three Magical Sets · Four Breathtaking Backdrops</span>
+    <h2 class="section-title">Inside the Experience</h2>
+    <p class="section-intro">Every stop is crafted to feel alive — immersive, cinematic, and filled with the kind of wonder that reminds you magic is still real.</p>
+  </div>
+
+  <div class="sets-grid">
+
+    <!-- SET 1 -->
+    <div class="set-card reveal">
+      <div class="set-img-wrap">
+        <img src="https://static.showit.co/1200/grnKby-LhURUKPp8EHgHrw/116285/wizard_shoppe.jpg" alt="The Wizard Shoppe — Diagon Alley at Christmas" loading="lazy">
+      </div>
+      <div class="set-content">
+        <span class="set-number">01</span>
+        <span class="set-label">Set One</span>
+        <h3 class="set-name">Diagon Alley &<br>The Wizard Shoppe</h3>
+        <p class="set-desc">Cobblestones gleam under golden lantern light. Shop shelves overflow with spellbooks, potions, wands, and enchanted curiosities. Step inside and let the hum of wonder fill the air — the kind that makes you feel like you've just walked into the first page of your favorite story.</p>
+        <div class="set-detail-chips">
+          <span class="chip">🏪 Wizard Shoppe</span>
+          <span class="chip">🪄 Wands & Potions</span>
+          <span class="chip">❄️ Snowy Cobblestones</span>
+          <span class="chip">🏮 Golden Lanterns</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SET 2 -->
+    <div class="set-card reverse reveal">
+      <div class="set-img-wrap">
+        <img src="https://static.showit.co/1200/hxhZj3Umsoqk2PhMqeoY3Q/116285/train_station.jpg" alt="Platform 9 3/4 — A Holiday Departure" loading="lazy">
+      </div>
+      <div class="set-content">
+        <span class="set-number">02</span>
+        <span class="set-label">Set Two</span>
+        <h3 class="set-name">Platform 9¾</h3>
+        <p class="set-desc">Steam curls through the air as the Hogwarts Express prepares for departure. Stack your luggage, clutch your ticket, and grab a treat from the trolley cart. Feel the anticipation build as the train whistle sounds and light glows through the mist. This is the moment before the story begins — the spark of adventure, captured forever.</p>
+        <div class="set-detail-chips">
+          <span class="chip">🚂 Hogwarts Express</span>
+          <span class="chip">🧳 Luggage Trolley</span>
+          <span class="chip">🍫 Treat Cart</span>
+          <span class="chip">✨ Garlands & Lights</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SET 3 -->
+    <div class="set-card reveal">
+      <div class="set-img-wrap">
+        <img src="https://static.showit.co/1200/6zlGptfVkdpOq4g_nl1TJg/116285/school_library_family.jpg" alt="Dumbledore's Christmas Library" loading="lazy">
+      </div>
+      <div class="set-content">
+        <span class="set-number">03</span>
+        <span class="set-label">Set Three</span>
+        <h3 class="set-name">Dumbledore's<br>Christmas Library</h3>
+        <p class="set-desc">Candlelight flickers across ancient pages. Rich wooden shelves dressed in garland hold centuries of spells. Mix potions, practice spells, and share a butterbeer with Dumbledore himself. Laughter lingers between the shelves, time slows down, and every frame feels like a memory pulled straight from the heart of the wizarding world.</p>
+        <div class="set-detail-chips">
+          <span class="chip">📚 Ancient Spellbooks</span>
+          <span class="chip">🕯 Floating Candles</span>
+          <span class="chip">🎁 Dumbledore's Stocking</span>
+          <span class="chip">🍺 Butterbeer Feature</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── QUOTE BAND ── -->
+<div class="quote-band">
+  <div class="quote-band-inner reveal">
+    <div class="candle-row" style="margin-bottom:32px;">
+      <div class="candle"><div class="candle-flame">🕯</div><div class="candle-body"></div></div>
+      <div class="candle"><div class="candle-flame">🕯</div><div class="candle-body"></div></div>
+      <div class="candle"><div class="candle-flame">🕯</div><div class="candle-body"></div></div>
+    </div>
+    <blockquote>"It does not do to dwell on dreams and forget to live — but <em>some dreams deserve to be stepped inside.</em>"</blockquote>
+    <p class="quote-attribution">— Jennifer Mummert Photography · Southern Maryland</p>
+  </div>
+</div>
+
+<!-- ── WHAT MAKES IT DIFFERENT ── -->
+<section class="details-section">
+  <div class="section-header reveal" style="text-align:center; margin-bottom:0;">
+    <span class="eyebrow">What Sets This Apart</span>
+    <h2 class="section-title">Not a Photoshoot.<br>A Story You Live Inside.</h2>
+  </div>
+  <div class="details-grid">
+    <div class="detail-card reveal reveal-delay-1">
+      <span class="detail-icon">🎬</span>
+      <h3 class="detail-title">Cinematic Immersion</h3>
+      <p class="detail-text">Every set was built for depth and dimension — the light, the texture, the warmth that makes you forget you're standing in front of a camera.</p>
+    </div>
+    <div class="detail-card reveal reveal-delay-2">
+      <span class="detail-icon">🧭</span>
+      <h3 class="detail-title">Wander, Don't Pose</h3>
+      <p class="detail-text">Kids explore. Couples find their moment. Friends laugh. Jennifer follows the magic as it happens — candid, real, and entirely yours.</p>
+    </div>
+    <div class="detail-card reveal reveal-delay-3">
+      <span class="detail-icon">👨‍👩‍👧‍👦</span>
+      <h3 class="detail-title">For Everyone</h3>
+      <p class="detail-text">Families, couples, friend groups, solo adventurers — if you love the wizarding world, this experience was made for you.</p>
+    </div>
+    <div class="detail-card reveal reveal-delay-1">
+      <span class="detail-icon">🖼️</span>
+      <h3 class="detail-title">Cinematic Editing</h3>
+      <p class="detail-text">Every image is professionally edited in Jennifer's signature true-to-color, documentary style — warm, timeless, and pulled straight from a movie scene.</p>
+    </div>
+    <div class="detail-card reveal reveal-delay-2">
+      <span class="detail-icon">⏱️</span>
+      <h3 class="detail-title">Full Access Every Session</h3>
+      <p class="detail-text">Both the 30 and 60-minute sessions include access to all three sets and all four backdrops. No set is off-limits.</p>
+    </div>
+    <div class="detail-card reveal reveal-delay-3">
+      <span class="detail-icon">📅</span>
+      <h3 class="detail-title">October 2026 Only</h3>
+      <p class="detail-text">This experience happens once a year, in a single enchanted season. Spots are extremely limited — the Hogwarts Express doesn't hold for stragglers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOGWARTS LETTER ── -->
+<section class="letter-section">
+  <div class="letter-card reveal">
+    <div class="letter-text-side">
+      <p class="letter-eyebrow">Early Booking Exclusive</p>
+      <h2 class="letter-heading">Your Hogwarts Letter Is Already Being Written</h2>
+      <p class="letter-body">Before you ever step through our doors, the magic arrives at your home. Every family and individual who RSVPs early receives a personalized Hogwarts acceptance letter — sealed, signed, and addressed to you specifically.</p>
+      <ul class="letter-features">
+        <li>Your name (or your child's name) on the official letter</li>
+        <li>The Hogwarts seal pressed in wax</li>
+        <li>Signed by Dumbledore himself</li>
+        <li>A personal note written around what makes YOU magical — your favorite creature, your house, your spark</li>
+        <li>Available for children AND adults who want one</li>
+      </ul>
+      <a href="https://jmpsomd.pixieset.com/booking/wizarding-world-holiday-experience-30--Experience" class="btn-primary" target="_blank" style="display:inline-block; margin-top:4px; margin-right:10px;">🦉 Book 30 Min</a><a href="https://jmpsomd.pixieset.com/booking/wizarding-world-holiday-experience-60-minutes-experience" class="btn-primary" target="_blank" style="display:inline-block; margin-top:4px;">🪄 Book 60 Min</a>
+    </div>
+    <div class="letter-envelope-side">
+      <div class="envelope-art">
+        <span class="envelope-icon">✉️</span>
+        <p class="envelope-address">
+          <em>To:</em><br>
+          [Your Name Here]<br>
+          [Your Street]<br>
+          Southern Maryland<br>
+          <br>
+          <small style="color:var(--gold); font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em;">By Owl Post</small>
+        </p>
+      </div>
+      <div class="envelope-seal">⚡</div>
+      <p style="font-family:'IM Fell English',serif; font-style:italic; font-size:0.8rem; color:var(--smoke); text-align:center; max-width:200px; line-height:1.6;">Dumbledore's quill is warm. The seal is ready. Is your name on the list?</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section class="pricing-section" id="pricing">
+  <span class="eyebrow reveal">Session Options</span>
+  <h2 class="section-title reveal">Choose Your Adventure</h2>
+  <p class="section-intro reveal">Both experiences include full access to every set and every backdrop. The only difference is how long you get to stay inside the magic.</p>
+
+  <div class="pricing-grid">
+    <div class="pricing-card reveal reveal-delay-1">
+      <span class="pricing-icon">⏱️</span>
+      <p class="pricing-duration">30-Minute Experience</p>
+      <p class="pricing-price"><span>$</span>300</p>
+      <p class="pricing-images">15 professionally edited images</p>
+      <ul class="pricing-includes">
+        <li>Access to all 3 sets & 4 backdrops</li>
+        <li>Diagon Alley & The Wizard Shoppe</li>
+        <li>Platform 9¾</li>
+        <li>Dumbledore's Christmas Library</li>
+        <li>Private online gallery delivery</li>
+        <li>Hogwarts letter eligibility</li>
+      </ul>
+      <a href="https://jmpsomd.pixieset.com/booking/wizarding-world-holiday-experience-30--Experience" class="btn-book" target="_blank">🎟 Book 30 Minutes</a>
+    </div>
+
+    <div class="pricing-card featured reveal reveal-delay-2">
+      <span class="featured-badge">Most Magic</span>
+      <span class="pricing-icon">✨</span>
+      <p class="pricing-duration">60-Minute Experience</p>
+      <p class="pricing-price"><span>$</span>600</p>
+      <p class="pricing-images">30 professionally edited images</p>
+      <ul class="pricing-includes">
+        <li>Access to all 3 sets & 4 backdrops</li>
+        <li>Diagon Alley & The Wizard Shoppe</li>
+        <li>Platform 9¾</li>
+        <li>Dumbledore's Christmas Library</li>
+        <li>More time to wander & explore</li>
+        <li>Private online gallery delivery</li>
+        <li>Hogwarts letter eligibility</li>
+      </ul>
+      <a href="https://jmpsomd.pixieset.com/booking/wizarding-world-holiday-experience-60-minutes-experience" class="btn-book" target="_blank">🪄 Book 60 Minutes</a>
+    </div>
+  </div>
+
+  <p style="margin-top:24px; font-family:'IM Fell English',serif; font-style:italic; font-size:0.88rem; color:var(--smoke); line-height:1.7;">
+    October 2026 · Southern Maryland · Exact location details provided upon booking<br>
+    Limited availability — sessions fill quickly
+  </p>
+</section>
+
+<!-- ── COSTUMES ── -->
+<section class="costume-section">
+  <div class="costume-card reveal">
+    <span class="eyebrow">Dress the Part</span>
+    <h2 class="section-title" style="font-size:clamp(1.2rem,2.5vw,1.8rem); margin-bottom:16px;">Jennifer's Wizarding World Shopping Guide</h2>
+    <p class="costume-intro">Costumes are completely optional — you'll look magical no matter what. But if you want to arrive in full wizarding style, these are Jennifer's personal picks. All links are Amazon affiliate links.</p>
+
+    <div class="costume-grid">
+      <div class="house-block house-gryffindor">
+        <p class="house-name">🦁 Gryffindor Robes</p>
+        <div class="house-links">
+          <a href="https://amzn.to/3MgGPmZ" class="house-link" target="_blank">Kids →</a>
+          <a href="https://amzn.to/4qDHnkD" class="house-link" target="_blank">Adults →</a>
+        </div>
+      </div>
+      <div class="house-block house-hufflepuff">
+        <p class="house-name">🦡 Hufflepuff Robes</p>
+        <div class="house-links">
+          <a href="https://amzn.to/4rpH91X" class="house-link" target="_blank">Kids →</a>
+          <a href="https://amzn.to/4s0sqKM" class="house-link" target="_blank">Adults →</a>
+        </div>
+      </div>
+      <div class="house-block house-ravenclaw">
+        <p class="house-name">🦅 Ravenclaw Robes</p>
+        <div class="house-links">
+          <a href="https://amzn.to/40ewoTY" class="house-link" target="_blank">Kids →</a>
+          <a href="https://amzn.to/4bW5gjV" class="house-link" target="_blank">Adults →</a>
+        </div>
+      </div>
+      <div class="house-block house-slytherin">
+        <p class="house-name">🐍 Slytherin Robes</p>
+        <div class="house-links">
+          <a href="https://amzn.to/4rWwk7k" class="house-link" target="_blank">Kids →</a>
+          <a href="https://amzn.to/4ro8Jwk" class="house-link" target="_blank">Adults →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="other-props">
+      <p class="other-props-title">Wands, Props & Accessories</p>
+      <div class="prop-links">
+        <a href="https://amzn.to/4kMFP6U" class="prop-link" target="_blank">🪄 Wands →</a>
+        <a href="https://amzn.to/4bWPeX3" class="prop-link" target="_blank">🎭 Prop Replicas →</a>
+        <a href="https://amzn.to/4kCzMBu" class="prop-link" target="_blank">✨ More Props →</a>
+        <a href="https://amzn.to/4aEckPM" class="prop-link" target="_blank">🧳 Travel Trunk →</a>
+      </div>
+    </div>
+    <p class="affiliate-note">* All links are Amazon affiliate links. Jennifer only recommends items she'd genuinely use in her own sessions. Purchases made through these links support this small business at no extra cost to you. 🪄</p>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="faq-section" id="faq">
+  <div class="section-header reveal" style="text-align:center;">
+    <span class="eyebrow">Common Questions</span>
+    <h2 class="section-title">Everything You Need to Know</h2>
+  </div>
+
+  <div class="faq-list reveal">
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <button class="faq-q">
+        <span class="faq-q-text">Where is the Wizarding World Holiday Experience located?</span>
+        <div class="faq-chevron"></div>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">The experience is located in Southern Maryland in the DMV area. Exact location details, including parking instructions, are provided upon booking confirmation. 📍</div></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <button class="faq-q">
+        <span class="faq-q-text">Who is this experience for?</span>
+        <div class="faq-chevron"></div>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">Everyone who loves the wizarding world. Families with little witches and wizards, couples celebrating a milestone, friend groups, solo adventurers, grandparents, and anyone whose heart still dances at the thought of a wizarding Christmas. This is not just for kids — it's for every age that believes in magic. ✨</div></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <button class="faq-q">
+        <span class="faq-q-text">What sets are included in every session?</span>
+        <div class="faq-chevron"></div>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">Every session — both 30-minute and 60-minute — includes full access to all three sets: Diagon Alley & The Wizard Shoppe (with wands, potions, and spell books), Platform 9¾ (with luggage trolley, treat cart, and the Hogwarts Express backdrop), and Dumbledore's Christmas Library (with floating candles, ancient books, and a butterbeer feature). No set is off-limits. 🪄</div></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <button class="faq-q">
+        <span class="faq-q-text">How many photos do I receive?</span>
+        <div class="faq-chevron"></div>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">The 30-minute session includes 15 professionally edited images delivered in full resolution via a private online gallery. The 60-minute session includes 30 professionally edited images. All images are yours to download, print, and treasure forever. 📸</div></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <button class="faq-q">
+        <span class="faq-q-text">Do I need to wear a costume?</span>
+        <div class="faq-chevron"></div>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">Absolutely not required — you'll look magical no matter what you wear. That said, house robes, wands, and themed accessories add a wonderful layer of magic to the photos. Jennifer has a full shopping guide with her personal recommendations above! 🎓</div></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <button class="faq-q">
+        <span class="faq-q-text">When are sessions available?</span>
+        <div class="faq-chevron"></div>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">The Wizarding World Holiday Experience is available throughout October 2026. This is a once-a-year, limited-season event — spots book extremely quickly. Reserve yours as soon as possible to secure your preferred date. The Hogwarts Express doesn't hold for stragglers. 🚂</div></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <button class="faq-q">
+        <span class="faq-q-text">What is the Hogwarts letter, and how does it work?</span>
+        <div class="faq-chevron"></div>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">Early bookers receive a personalized Hogwarts acceptance letter mailed to their home before their session date. After booking, you'll complete a questionnaire where you share details about each person in your group — their magical qualities, favorite creature, hoped-for house, and what makes them uniquely them. Dumbledore uses all of that to craft a letter that feels genuinely personal. Available for children and adults alike. 🦉✉️</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FINAL CTA ── -->
+<section class="final-cta">
+  <div class="final-cta-inner reveal">
+    <div class="candle-row" style="margin-bottom:32px;">
+      <div class="candle"><div class="candle-flame">🕯</div><div class="candle-body"></div></div>
+      <div class="candle"><div class="candle-flame">🕯</div><div class="candle-body"></div></div>
+      <div class="candle"><div class="candle-flame">🕯</div><div class="candle-body"></div></div>
+      <div class="candle"><div class="candle-flame">🕯</div><div class="candle-body"></div></div>
+      <div class="candle"><div class="candle-flame">🕯</div><div class="candle-body"></div></div>
+    </div>
+    <h2 class="final-cta-title">Step Through<br>the Door</h2>
+    <p class="final-cta-sub">Some stories are too beautiful to only imagine. October 2026 is calling — will you answer?</p>
+    <div class="final-btns">
+      <a href="https://jmpsomd.pixieset.com/booking/wizarding-world-holiday-experience-30--Experience" class="btn-primary" target="_blank">🎟 Book 30 Minutes — $300</a>
+      <a href="https://jmpsomd.pixieset.com/booking/wizarding-world-holiday-experience-60-minutes-experience" class="btn-primary" target="_blank">🪄 Book 60 Minutes — $600</a>
+    </div>
+    <p class="urgency-note">⚡ Limited spots available · October 2026 · Southern Maryland</p>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <span class="footer-logo">Jennifer Mummert Photography</span>
+  <p class="footer-meta">
+    Southern Maryland · Est. 2018<br>
+    Weddings · Elopements · A Very Harry Christmas Experience
+  </p>
+  <div class="footer-links">
+    <a href="https://jmpsomd.com" target="_blank">Home</a>
+    <a href="https://jmpsomd.com/about" target="_blank">About</a>
+    <a href="https://jmpsomd.com/mini-sessions" target="_blank">Mini Sessions</a>
+    <a href="https://jmpsomd.com/contact" target="_blank">Contact</a>
+    <a href="https://facebook.com/jmpsomd" target="_blank">Facebook</a>
+    <a href="https://instagram.com/jmpsomd" target="_blank">Instagram</a>
+  </div>
+  <p style="margin-top:20px; font-family:'IM Fell English',serif; font-style:italic; font-size:0.78rem; color:var(--smoke);">"After all this time?" — Always. ✨</p>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   WAND CURSOR + SPARKS
+════════════════════════════════════════════════════════════ */
+const wand = document.getElementById('wand-cursor');
+let mouseX = 0, mouseY = 0, lastX = 0, lastY = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  wand.style.left = mouseX + 'px';
+  wand.style.top  = mouseY + 'px';
+
+  // spark on movement
+  const dx = mouseX - lastX, dy = mouseY - lastY;
+  if (Math.abs(dx) + Math.abs(dy) > 12) {
+    createSpark(mouseX, mouseY);
+    lastX = mouseX; lastY = mouseY;
+  }
+});
+
+document.addEventListener('click', e => {
+  for (let i = 0; i < 8; i++) createSpark(e.clientX, e.clientY, true);
+});
+
+function createSpark(x, y, burst = false) {
+  const s = document.createElement('div');
+  s.className = 'spark';
+  const size = burst ? (4 + Math.random() * 8) : (2 + Math.random() * 4);
+  const colors = ['#F0D080','#C9A84C','#FFE08A','#FFFFFF','#AE0001','#F5EDD8'];
+  const color = colors[Math.floor(Math.random() * colors.length)];
+  const angle = Math.random() * Math.PI * 2;
+  const dist  = burst ? (20 + Math.random() * 50) : (8 + Math.random() * 20);
+  s.style.cssText = `
+    width:${size}px; height:${size}px;
+    left:${x}px; top:${y}px;
+    background:${color};
+    box-shadow: 0 0 ${size*2}px ${color};
+    --dx:${Math.cos(angle)*dist}px;
+    --dy:${Math.sin(angle)*dist}px;
+  `;
+  document.body.appendChild(s);
+  setTimeout(() => s.remove(), 700);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FLOATING PARTICLES CANVAS
+════════════════════════════════════════════════════════════ */
+const canvas = document.getElementById('particles-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let W, H;
+
+function resizeCanvas() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function createParticles() {
+  particles = [];
+  const count = Math.floor(W / 14);
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 0.5 + Math.random() * 1.5,
+      dx: (Math.random() - 0.5) * 0.3,
+      dy: -0.2 - Math.random() * 0.4,
+      opacity: 0.3 + Math.random() * 0.7,
+      color: Math.random() > 0.5 ? '#C9A84C' : '#F5EDD8',
+    });
+  }
+}
+createParticles();
+
+function animateParticles() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => {
+    p.x += p.dx;
+    p.y += p.dy;
+    if (p.y < -4) { p.y = H + 4; p.x = Math.random() * W; }
+    if (p.x < -4) p.x = W + 4;
+    if (p.x > W + 4) p.x = -4;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.opacity;
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLL REVEAL
+════════════════════════════════════════════════════════════ */
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+revealEls.forEach(el => observer.observe(el));
+
+/* ═══════════════════════════════════════════════════════════
+   NAV SCROLL STATE
+════════════════════════════════════════════════════════════ */
+const nav = document.getElementById('siteNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ═══════════════════════════════════════════════════════════
+   FAQ ACCORDION
+════════════════════════════════════════════════════════════ */
+function toggleFaq(item) {
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CURSOR: make all interactive elements cursor-none
+════════════════════════════════════════════════════════════ */
+document.querySelectorAll('a, button').forEach(el => {
+  el.style.cursor = 'none';
+});
+</script>
+</body>
+</html>
